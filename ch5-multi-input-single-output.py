@@ -32,11 +32,12 @@ def ele_mul(delta, inputs):
 
 
 
-for i in range(3):
+for i in range(100):
   prediction = neural_network(inputs, weights)
   error = (prediction - true) ** 2
   delta = prediction - true
   weight_deltas = ele_mul(delta, inputs)
+  weight_deltas[0] = 0
 
   print('Error: ' + str(error) + " Prediction: " + str(prediction))
   print('delta: ' + str(delta) + " weight_deltas: " + str(weight_deltas))

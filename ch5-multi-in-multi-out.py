@@ -9,7 +9,7 @@ sad = [0.1, 0.0, 0.1, 0.2]
 inputs = [toes[0], wlrec[0], nfans[0]]
 outputs = [hurt[0], win[0], sad[0]]
 predictions = [1, 1, 1]
-alpha = 0.1
+alpha = 0.01
 
 errors = [0,0,0]
 deltas = [0,0,0]
@@ -33,23 +33,31 @@ def multiplication_matrix(inputs, weights):
   return predictions
 
 
-def process(inputs, weights):
+def process_combine(inputs, weights):
+  predictions = multiplication_matrix(inputs, weights)
   for i in range(3):
     predictions[i] = neural_network(inputs, weights[i])
     errors[i] = (predictions[i] - outputs[i]) ** 2
     deltas[i]= predictions[i]- outputs[i]
-
+    
+  for i in range(3):
     for j in range(3):
-      weight_deltas[i][j] = inputs[i] * deltas[j]
+      weight_deltas[i][j] = inputs[j] * deltas[i]
       weights[i][j] -= weight_deltas[i][j] * alpha
-
-      print('errors:' + str(errors))
-      print('predictions:' + str(predictions))
-      print('weight_deltas' + str(weight_deltas))
-      print('weights' + str(weights))
-      print('--------------')
-  
+    
+  print('errors:' + str(errors))
+  print('predictions:' + str(predictions))
+  print('outputs:' + str(outputs))
+  # print('deltas:' + str(deltas))
+  print('weights:' + str(weights))
+  print('----------------------------------')
   return weights 
+
+for i in range(5):
+  process_combine(inputs, weights)
+
+
+
 
 # errors = [ [0,0,0],
 #             [0,0,0],
@@ -58,25 +66,26 @@ def process(inputs, weights):
 # deltas = [ [0,0,0],
 #             [0,0,0],
 #             [0,0,0]]
-# def process(inputs, weights):
-#   for i in range(3):
-#     predictions[i] = neural_network(inputs, weights[i])
-#     for j in range(3):
-#       errors[i][j] = (inputs[i] * weights[i][j] - outputs[i]) ** 2
-#       deltas[i][j] = inputs[i] * weights[i][j] - outputs[i]
-#       weight_deltas[i][j] = inputs[i] * deltas[i][j]
-#       weights[i][j] -= weight_deltas[i][j] * alpha
 
-#       print('errors:' + str(errors))
-#       print('predictions:' + str(predictions))
-#       print('weight_deltas' + str(weight_deltas))
-#       print('weights' + str(weights))
-#       print('--------------')
-#   return weights[i]  
+def process_separate(inputs, weights):
+  for i in range(3):
+    predictions[i] = neural_network(inputs, weights[i])
+    for j in range(3):
+      errors[i][j] = (inputs[i] * weights[i][j] - outputs[i]) ** 2
+      deltas[i][j] = inputs[i] * weights[i][j] - outputs[i]
+      weight_deltas[i][j] = inputs[i] * deltas[i][j]
+      weights[i][j] -= weight_deltas[i][j] * alpha
 
-# for i in range(3):
-process(inputs, weights)
+      # print('errors:' + str(errors))
+      # print('predictions:' + str(predictions))
+      # print('weight_deltas' + str(weight_deltas))
+      # print('weights' + str(weights))
+      # print('--------------')
+
+  print('predictions:' + str(predictions))
+  print('outputs:' + str(outputs))
 
 
+  return weights[i]  
 
-  
+
